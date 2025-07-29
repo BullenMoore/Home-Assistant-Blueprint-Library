@@ -1,6 +1,6 @@
 blueprint:
-  name: IKEA SOMRIG Button
-  description: 'Control any entity, area or group with the IKEA Somrig shortcut button. Can detect both short and long presses of the button. There is no need to put something on every type of press, do what you like, it should work with empty entities.'
+  name: IKEA SOMRIG shortcut button
+  description: 'Control any entity, device, helper etc, with the IKEA Somrig shortcut button. Can detect both short and long presses of the button. There is no need to put something on every type of press, do what you like, it should work with empty values.\n\nA WARNING: The blueprint triggers on button releases which means that a "hold" action only triggers when you release the button. IKEA has set the duration for a long press fairly short (about half a second). So release the button when you think a long press has been made and it should work pretty natural.'
   domain: automation
   input:
     remote:
@@ -14,28 +14,28 @@ blueprint:
     first_button_tap:
       name: (OPTIONAL) First Button Tap
       description: What to do when the first button is tapped (short press)
-      default: {}
+      default: []
       selector:
         action: {}
 
     first_button_hold:
       name: (OPTIONAL) First Button Hold
       description: What to do when the first button is held (long press)
-      default: {}
+      default: []
       selector:
         action: {}
 
     second_button_tap:
       name: (OPTIONAL) Second Button Tap
       description: What to do when the second button is tapped (short press)
-      default: {}
+      default: []
       selector:
         action: {}
 
     second_button_hold:
       name: (OPTIONAL) Second Button Hold
       description: What to do when the second button is held (long press)
-      default: {}
+      default: []
       selector:
         action: {}
 
