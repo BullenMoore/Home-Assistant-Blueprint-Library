@@ -1,99 +1,20 @@
 blueprint:
-  name: IKEA SOMRIG Button (Power User Edition)
-  description: >
-    Control any target (entity, device, or area) with IKEA SOMRIG shortcut button.
-    Choose what service to call and which target to apply it to.
-    Supports short and long press for both buttons.
+  name: Action Selector Test
+  description: A test to confirm that action selector shows full action editor
   domain: automation
   input:
-    remote:
-      name: IKEA SOMRIG shortcut button
+    test_action:
+      name: Test Action
+      description: Full action input
+      default: []
       selector:
-        device:
-          integration: zha
-          model: SOMRIG shortcut button
-          multiple: false
-
-    first_button_tap_target:
-      name: First Button Tap Target
-      selector:
-        target: {}
-
-    first_button_tap_service:
-      name: First Button Tap Service
-      description: Service to call (e.g., light.toggle, switch.turn_on, wake_on_lan.send_magic_packet)
-      selector:
-        text:
-
-    first_button_hold_target:
-      name: First Button Hold Target
-      selector:
-        target: {}
-
-    first_button_hold_service:
-      name: First Button Hold Service
-      selector:
-        text:
-
-    second_button_tap_target:
-      name: Second Button Tap Target
-      selector:
-        target: {}
-
-    second_button_tap_service:
-      name: Second Button Tap Service
-      selector:
-        text:
-
-    second_button_hold_target:
-      name: Second Button Hold Target
-      selector:
-        target: {}
-
-    second_button_hold_service:
-      name: Second Button Hold Service
-      selector:
-        text:
-
-mode: queued
-max_exceeded: silent
+        action: {}
 
 trigger:
-  - platform: event
-    event_type: zha_event
-    event_data:
-      device_id: !input remote
-
-variables:
-  command: '{{ trigger.event.data.command }}'
-  button: '{{ trigger.event.data.endpoint_id }}'
+  - platform: time
+    at: "12:00:00"
 
 action:
   - choose:
-      - conditions:
-          - '{{ command == "short_release" }}'
-          - '{{ button == 1 }}'
-        sequence:
-          - service: !input first_button_tap_service
-            target: !input first_button_tap_target
-
-      - conditions:
-          - '{{ command == "long_release" }}'
-          - '{{ button == 1 }}'
-        sequence:
-          - service: !input first_button_hold_service
-            target: !input first_button_hold_target
-
-      - conditions:
-          - '{{ command == "short_release" }}'
-          - '{{ button == 2 }}'
-        sequence:
-          - service: !input second_button_tap_service
-            target: !input second_button_tap_target
-
-      - conditions:
-          - '{{ command == "long_release" }}'
-          - '{{ button == 2 }}'
-        sequence:
-          - service: !input second_button_hold_service
-            target: !input second_button_hold_target
+      - conditions: []
+        sequence: !input test_action
