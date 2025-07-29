@@ -1,1 +1,83 @@
-## To be added
+blueprint:
+  name: IKEA SOMRIG Button
+  description: 'Control any entity, area or group with the IKEA Somrig shortcut button. Can detect both short and long presses of the button. There is no need to put something on every type of press, do what you like, it should work with empty entities.'
+  domain: automation
+  input:
+    remote:
+      name: IKEA Somrig shortcut button
+      selector:
+        device:
+          integration: zha
+          model: SOMRIG shortcut button
+          multiple: false
+
+    first_button_tap:
+      name: (OPTIONAL) First Button Tap
+      description: What to do when the first button is tapped (short press)
+      default: {}
+      selector:
+        action: {}
+
+    first_button_hold:
+      name: (OPTIONAL) First Button Hold
+      description: What to do when the first button is held (long press)
+      default: {}
+      selector:
+        action: {}
+
+    second_button_tap:
+      name: (OPTIONAL) Second Button Tap
+      description: What to do when the second button is tapped (short press)
+      default: {}
+      selector:
+        action: {}
+
+    second_button_hold:
+      name: (OPTIONAL) Second Button Hold
+      description: What to do when the second button is held (long press)
+      default: {}
+      selector:
+        action: {}
+
+mode: queued
+max_exceeded: silent
+variables:
+  first_button_tap: !input first_button_tap
+  first_button_hold: !input first_button_hold
+  second_button_tap: !input second_button_tap
+  second_button_hold: !input second_button_hold
+  lights:
+    first_button_tap: !input first_button_tap
+    first_button_hold: !input first_button_hold
+    second_button_tap: !input second_button_tap
+    second_button_hold: !input second_button_hold
+
+trigger:
+- platform: event
+  event_type: zha_event
+  event_data:
+    device_id: !input remote
+
+action:
+- variables:
+    command: '{{ trigger.event.data.command }}'
+    button: '{{ trigger.event.data.endpoint_id }}'
+
+- choose:
+  - conditions:
+    - '{{ command == "short_release" }}'
+    - '{{ button == 1 }}'
+    sequence: !input first_button_tap
+  - conditions:
+    - '{{ command == "long_release" }}'
+    - '{{ button == 1 }}'
+    sequence: !input first_button_hold
+  - conditions:
+    - '{{ command == "short_release" }}'
+    - '{{ button == 2 }}'
+    sequence: !input second_button_tap
+  - conditions:
+    - '{{ command == "long_release" }}'
+    - '{{ button == 2 }}'
+    sequence: !input second_button_hold
+    
