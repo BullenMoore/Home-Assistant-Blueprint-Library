@@ -1,20 +1,78 @@
 blueprint:
-  name: Action Selector Test
-  description: A test to confirm that action selector shows full action editor
+  name: IKEA SOMRIG Button (Full Action Selector)
+  description: >
+    Control anything with the IKEA SOMRIG shortcut button.
+    Supports short and long press for both buttons.
+    Define full actions for each press using the visual action editor.
   domain: automation
   input:
-    test_action:
-      name: Test Action
-      description: Full action input
+    remote:
+      name: IKEA SOMRIG shortcut button
+      selector:
+        device:
+          integration: zha
+          model: SOMRIG shortcut button
+          multiple: false
+
+    first_button_tap:
+      name: First Button Tap
+      description: Action when first button is short pressed
       default: []
       selector:
         action: {}
 
+    first_button_hold:
+      name: First Button Hold
+      description: Action when first button is long pressed
+      default: []
+      selector:
+        action: {}
+
+    second_button_tap:
+      name: Second Button Tap
+      description: Action when second button is short pressed
+      default: []
+      selector:
+        action: {}
+
+    second_button_hold:
+      name: Second Button Hold
+      description: Action when second button is long pressed
+      default: []
+      selector:
+        action: {}
+
+mode: queued
+max_exceeded: silent
+
 trigger:
-  - platform: time
-    at: "12:00:00"
+  - platform: event
+    event_type: zha_event
+    event_data:
+      device_id: !input remote
+
+variables:
+  command: '{{ trigger.event.data.command }}'
+  button: '{{ trigger.event.data.endpoint_id }}'
 
 action:
   - choose:
-      - conditions: []
-        sequence: !input test_action
+      - conditions:
+          - '{{ command == "short_release" }}'
+          - '{{ button == 1 }}'
+        sequence: !input first_button_tap
+
+      - conditions:
+          - '{{ command == "long_release" }}'
+          - '{{ button == 1 }}'
+        sequence: !input first_button_hold
+
+      - conditions:
+          - '{{ command == "short_release" }}'
+          - '{{ button == 2 }}'
+        sequence: !input second_button_tap
+
+      - conditions:
+          - '{{ command == "long_release" }}'
+          - '{{ button == 2 }}'
+        sequence: !input second_button_hold
