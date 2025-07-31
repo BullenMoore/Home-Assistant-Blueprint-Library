@@ -1,0 +1,116 @@
+blueprint:
+  name: Philips Dim Switch v2
+  description: "Control any entity, device, helper etc, with the IKEA Somrig shortcut button. Can detect both short and long presses of the button. There is no need to put something on every type of press, do what you like, it should work with empty values.\n\nA WARNING: The blueprint triggers on button releases which means that a 'hold' action only triggers when you release the button. IKEA has set the duration for a long press fairly short (about half a second). So release the button when you think a long press has been made and it should work pretty natural."
+  domain: automation
+  input:
+    remote:
+      name: Philips Dim Switch v2
+      selector:
+        device:
+          integration: zha
+          model: RWL022
+          multiple: false
+
+    on_button_tap:
+      name: (OPTIONAL) On Button Tap
+      description: What to do when the on button is tapped (short press)
+      default: []
+      selector:
+        action: {}
+
+    on_button_hold:
+      name: (OPTIONAL) On Button Hold
+      description: What to do when the on button is held (long press)
+      default: []
+      selector:
+        action: {}
+
+    up_button_tap:
+      name: (OPTIONAL) Up Button Tap
+      description: What to do when the up button is tapped (short press)
+      default: []
+      selector:
+        action: {}
+
+    up_button_hold:
+      name: (OPTIONAL) up Button Hold
+      description: What to do when the up button is held (long press)
+      default: []
+      selector:
+        action: {}
+
+    down_button_tap:
+      name: (OPTIONAL) Down Button Tap
+      description: What to do when the down button is tapped (short press)
+      default: []
+      selector:
+        action: {}
+
+    down_button_hold:
+      name: (OPTIONAL) Down Button Hold
+      description: What to do when the down button is held (long press)
+      default: []
+      selector:
+        action: {}
+
+    hue_button_tap:
+      name: (OPTIONAL) HUE Button Tap
+      description: What to do when the HUE button is tapped (short press)
+      default: []
+      selector:
+        action: {}
+
+    hue_button_hold:
+      name: (OPTIONAL) HUE Button Hold
+      description: What to do when the HUE button is held (long press)
+      default: []
+      selector:
+        action: {}
+
+mode: queued
+max_exceeded: silent
+variables:
+  on_button_tap: !input on_button_tap
+  on_button_hold: !input on_button_hold
+  up_button_tap: !input up_button_tap
+  up_button_hold: !input up_button_hold
+  down_button_tap: !input down_button_tap
+  down_button_hold: !input down_button_hold
+  hue_button_tap: !input hue_button_tap
+  hue_button_hold: !input hue_button_hold
+
+trigger:
+- platform: event
+  event_type: zha_event
+  event_data:
+    device_id: !input remote
+
+action:
+- variables:
+    command: '{{ trigger.event.data.command }}'
+
+- choose:
+  - conditions:
+    - '{{ command == "on_short_release" }}'
+    sequence: !input on_button_tap
+  - conditions:
+    - '{{ command == "on_long_release" }}'
+    sequence: !input on_button_hold
+  - conditions:
+    - '{{ command == "up_short_release" }}'
+    sequence: !input up_button_tap
+  - conditions:
+    - '{{ command == "up_long_release" }}'
+    sequence: !input up_button_hold
+  - conditions:
+    - '{{ command == "down_short_release" }}'
+    sequence: !input down_button_tap
+  - conditions:
+    - '{{ command == "down_long_release" }}'
+    sequence: !input down_button_hold
+  - conditions:
+    - '{{ command == "off_short_release" }}'
+    sequence: !input hue_button_tap
+  - conditions:
+    - '{{ command == "off_long_release" }}'
+    sequence: !input hue_button_hold
