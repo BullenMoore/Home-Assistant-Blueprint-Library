@@ -1,0 +1,152 @@
+blueprint:
+  name: Philips Dim Switch v2 (native)
+  description: "Control any light(s) with the Philips Dim Switch v2.\nThis blueprint is meant to behave as the switch works originally in the Philips HUE App."
+  domain: automation
+  input:
+    remote:
+      name: Philips Dim Switch v2
+      selector:
+        device:
+          integration: zha
+          model: RWL022
+          multiple: false
+
+    on_button_tap:
+      name: On Button Tap
+      description: What to do when the on button is tapped (short press)
+      selector:
+        target:
+          entity:
+          - {}
+
+    ## Hold?
+
+    dim_scale:
+      name: Diming Scale
+      description: How much the light(s) should dim when you press the + or - button.
+      default: 1.0
+      selector:
+        number:
+          min: 0.0
+          max: 5.0
+          step: 0.01
+          mode: slider
+
+    scene_cycle:
+      name: HUE Button
+      description: Pick the scenes you want this switch to cycle through, in the order you want.
+      selector:
+        entity:
+          domain: scene
+          multiple: true
+    counter_helper:
+      name: Scene Counter
+      description: A counter used to track which scene to activate next (You need to create this on your own).
+      selector:
+        entity:
+          domain: counter
+
+    on_button_hold:
+      name: (OPTIONAL) On Button Hold
+      description: What to do when the on button is held (long press)
+      default: []
+      selector:
+        action: {}
+
+    up_button_tap:
+      name: (OPTIONAL) Up Button Tap
+      description: What to do when the up button is tapped (short press)
+      default: []
+      selector:
+        action: {}
+
+    up_button_hold:
+      name: (OPTIONAL) Up Button Hold
+      description: What to do when the up button is held (long press)
+      default: []
+      selector:
+        action: {}
+
+    down_button_tap:
+      name: (OPTIONAL) Down Button Tap
+      description: What to do when the down button is tapped (short press)
+      default: []
+      selector:
+        action: {}
+
+    down_button_hold:
+      name: (OPTIONAL) Down Button Hold
+      description: What to do when the down button is held (long press)
+      default: []
+      selector:
+        action: {}
+
+    hue_button_tap:
+      name: (OPTIONAL) HUE Button Tap
+      description: What to do when the HUE button is tapped (short press)
+      default: []
+      selector:
+        action: {}
+
+    hue_button_hold:
+      name: (OPTIONAL) HUE Button Hold
+      description: What to do when the HUE button is held (long press)
+      default: []
+      selector:
+        action: {}
+
+mode: queued
+max_exceeded: silent
+variables:
+  on_button_tap: !input on_button_tap
+  on_button_hold: !input on_button_hold
+  up_button_tap: !input up_button_tap
+  up_button_hold: !input up_button_hold
+  down_button_tap: !input down_button_tap
+  down_button_hold: !input down_button_hold
+  hue_button_tap: !input hue_button_tap
+  lights:
+    on_button_tap: !input on_button_tap
+
+trigger:
+- platform: event
+  event_type: zha_event
+  event_data:
+    device_id: !input remote
+
+action:
+- variables:
+    command: '{{ trigger.event.data.command }}' ## off_with_effect, step, step, recall
+    up_or_down: '{{ trigger.event.data.args[0] }}' ## 0 = Up & 1 = Down
+
+
+    scenes: !input scene_cycle
+    counter_value: "{{ states[!input counter_entity].state | int }}"
+    index: "{{ counter_value % scenes | length }}"
+    scene_to_activate: "{{ scenes[index] }}"
+
+- choose:
+  - conditions:
+    - '{{ command == "on_short_release" }}'
+    sequence: !input on_button_tap
+  - conditions:
+    - '{{ command == "on_long_release" }}'
+    sequence: !input on_button_hold
+  - conditions:
+    - '{{ command == "up_short_release" }}'
+    sequence: !input up_button_tap
+  - conditions:
+    - '{{ command == "up_long_release" }}'
+    sequence: !input up_button_hold
+  - conditions:
+    - '{{ command == "down_short_release" }}'
+    sequence: !input down_button_tap
+  - conditions:
+    - '{{ command == "down_long_release" }}'
+    sequence: !input down_button_hold
+  - conditions:
+    - '{{ command == "off_short_release" }}'
+    sequence: !input hue_button_tap
+  - conditions:
+    - '{{ command == "off_long_release" }}'
+    sequence: !input hue_button_hold
