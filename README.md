@@ -47,15 +47,15 @@ This is to make finding something suitable for your device easier. Just follow y
 
 If you don't know the manufacturer or model name of your device, you can find it by going into your Home Assistant and go to **Settings > Devices & services > Zigbee Home Automation integration** and click the device you want a blueprint for. The manufacturer and model is displayed under "Device info".
 
-Example picture of a device in HA
+<img width="421" alt="MM-github" src="https://github.com/user-attachments/assets/e1ed0545-afdd-45ab-ac53-8adf1178aaab" />
 
 Note: Some devices might not have the name you'd expect.
 - IKEA shows as expected, *"IKEA of Sweden"*
 - Philips HUE shows as unexpected, *"Signify Netherlands B.V.".*
+
 If unsure, check the physical device as it might give a hint to the manufacturer/model name.
 
-
-Picture of such a case
+<img width="700" alt="alternative-manufacturer" src="https://github.com/user-attachments/assets/201065ae-2e6d-4e43-ab08-76b7f2622c6d" />
 
 ### Native vs unlocked vs something else
 
