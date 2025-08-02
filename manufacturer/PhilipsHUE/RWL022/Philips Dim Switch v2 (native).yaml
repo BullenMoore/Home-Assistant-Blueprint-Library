@@ -59,6 +59,7 @@ max_exceeded: silent
 variables:
   on_button_tap: !input on_button_tap
   on_button_hold: !input on_button_hold
+  dim_scale: !input dim_scale
 
 trigger:
 - platform: event
@@ -69,8 +70,8 @@ trigger:
 action:
 - variables:
     command: '{{ trigger.event.data.command }}' ## off_with_effect, step, step, recall
-    up_or_down: '{{ trigger.event.data.params.step_mode }}'
-    step_size: '{{ trigger.event.data.params.step_size }}'
+    up_or_down: '{{ trigger.event.data.params.step_mode | int }}'
+    step_size: '{{ trigger.event.data.params.step_size | int }}'
     scenes: !input scene_cycle
 
 - choose:
@@ -86,7 +87,7 @@ action:
 
   - conditions:
     - '{{ command == "step" }}'
-    - '{{ up_or_down == "0" }}' 
+    - '{{ up_or_down == 0 }}' 
     sequence:
     - service: light.turn_on
       target: !input on_button_tap
@@ -97,7 +98,7 @@ action:
 
   - conditions:
     - '{{ command == "step" }}'
-    - '{{ up_or_down == "1" }}' 
+    - '{{ up_or_down == 1 }}' 
     sequence:
     - service: light.turn_on
       target: !input on_button_tap
