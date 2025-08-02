@@ -69,9 +69,8 @@ trigger:
 action:
 - variables:
     command: '{{ trigger.event.data.command }}' ## off_with_effect, step, step, recall
-    up_or_down: '{{ trigger.event.data.args[0] }}' ## 0 = Up & 1 = Down
-    step_size: '{% if (trigger.event.data.params is defined) and (trigger.event.data.params.step_size
-      is defined) %}{{trigger.event.data.params.step_size}}{% endif %}'
+    up_or_down: '{{ trigger.event.data.params.step_mode }}'
+    step_size: '{{trigger.event.data.params.step_size}}'
     scenes: !input scene_cycle
 
 - choose:
