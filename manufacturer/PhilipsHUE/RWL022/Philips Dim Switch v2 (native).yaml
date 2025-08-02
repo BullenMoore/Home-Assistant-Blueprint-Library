@@ -70,8 +70,8 @@ trigger:
 action:
 - variables:
     command: '{{ trigger.event.data.command }}' ## off_with_effect, step, step, recall
-    up_or_down: '{% if (trigger.event.data.params is defined) and (trigger.event.data.params.step_mode is defined) %}{{trigger.event.data.params.step_mode}}{% endif %}'
-    step_size: '{% if (trigger.event.data.params is defined) and (trigger.event.data.params.step_size is defined) %}{{trigger.event.data.params.step_size}}{% endif %}'
+    up_or_down: '{% if (trigger.event.data.params is defined) and (trigger.event.data.params.step_mode is defined) %}{{trigger.event.data.params.step_mode | int}}{% endif %}'
+    step_size: '{% if (trigger.event.data.params is defined) and (trigger.event.data.params.step_size is defined) %}{{trigger.event.data.params.step_size | int}}{% endif %}'
     scenes: !input scene_cycle
 
 - choose:
