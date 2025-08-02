@@ -112,9 +112,10 @@ action:
     - service: counter.increment
       target:
         entity_id: !input counter_entity
-
     - variables:
-        counter_value: "{{ states[!input counter_entity].state | int }}"
+        counter_entity: !input counter_entity
+    - variables:
+        counter_value: "{{ states[counter_entity].state | int }}"
         index: "{{ counter_value % scenes | length }}"
         scene_to_activate: "{{ scenes[index] }}"
 
